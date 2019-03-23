@@ -31,9 +31,6 @@ fs.readdir('./cmds', (err,files) => {
     });
 });
 
-const raw = fs.readFileSync('./roles.json');
-const allowedRoles = JSON.parse(raw);
-
 const validation = (serverRoles, userRoles) => {
     let val = false;
     serverRoles.forEach((role) => {
@@ -50,20 +47,22 @@ bot.on('ready', async () => {
 });
 
 
-bot.on("message", msg => {
+bot.on("message", async msg => {
     if (msg.channel.type === "dm") return;
     if (msg.author.bot) return;
 
-    const msg_array = msg.content.split(" ");
+    const msg_array = msg.content.split(/ |　/); // eslint-disable-line
     const command = msg_array[0];
     const args = msg_array.slice(1);
 
     if (!command.startsWith(prefix)) return;
 
     if (bot.commands.get(command.slice(prefix.length))){
+        const allowedRoles = require('./roles.json');
         if (validation(allowedRoles.roles, msg.member.roles.array()) || msg.member.id === owner){
             const cmd = bot.commands.get(command.slice(prefix.length));
             if (cmd) cmd.run(bot, msg, args);
+            logger.info(`コマンドを検知：${command} - 実行ユーザー：${msg.author.username}`);
         } else {
             logger.info(`許可されていないユーザーからのコマンドを検知しました: ${msg.author.tag} (${msg.author.id})`);
             msg.channel.send("あなたにはScrimBotを操作する権限がありません。");
