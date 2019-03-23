@@ -11,7 +11,7 @@ bot.commands = new Discord.Collection();
 const prefix = settings.prefix;
 const token = settings.token;
 const owner = settings.owner;
-const admin = settings.admin;
+const admin = settings.admin; // eslint-disable-line
 
 //read commands files
 fs.readdir('./cmds', (err,files) => {
@@ -19,7 +19,7 @@ fs.readdir('./cmds', (err,files) => {
         console.log(err);
     }
 
-    let cmdFiles = files.filter(f => f.split(".").pop() === "js");
+    const cmdFiles = files.filter(f => f.split(".").pop() === "js");
 
     if (cmdFiles.length === 0){
         console.log("No files found");
@@ -27,16 +27,16 @@ fs.readdir('./cmds', (err,files) => {
     }
 
     cmdFiles.forEach((f,i) => {
-        let props = require(`./cmds/${f}`);
+        const props = require(`./cmds/${f}`);
         console.log(`${i+1}: ${f} をロードしました`);
         bot.commands.set(props.help.name, props);
-    })
-})
+    });
+});
 
-let raw = fs.readFileSync('./roles.json');
-let allowedRoles = JSON.parse(raw);
+const raw = fs.readFileSync('./roles.json');
+const allowedRoles = JSON.parse(raw);
 
-let validation = function(serverRoles, userRoles){
+const validation = function(serverRoles, userRoles) {
     let val = false;
     serverRoles.forEach((role) => {
         userRoles.forEach((usr) => {
@@ -46,30 +46,29 @@ let validation = function(serverRoles, userRoles){
         });
     });
     return val;
-}
+};
 
 bot.on('ready', async () => {
-    bot.user.setGame(`ScrimBot created by MIG.Karasu | Bot Support on Twitter -> @KaraaasuGg2 Worked in 8 servers`)
+    bot.user.setActivity(`ScrimBot created by MIG.Karasu | Bot Support on Twitter -> @KaraaasuGg2 Worked in ${bot.guilds.size} servers`);
     console.log("準備が整いました。");
-
 });
 
 
-bot.on("message",msg => {
+bot.on("message", msg => {
     if (msg.channel.type === "dm") return;
     if (msg.author.bot) return;
 
-    let msg_array = msg.content.split(" ");
-    let command = msg_array[0];
-    let args = msg_array.slice(1);
+    const msg_array = msg.content.split(" ");
+    const command = msg_array[0];
+    const args = msg_array.slice(1);
 
     if (!command.startsWith(prefix)) return;
 
     if (bot.commands.get(command.slice(prefix.length))){
         if (validation(allowedRoles.roles,msg.member.roles.array()) || msg.member.id === owner){
-            let cmd = bot.commands.get(command.slice(prefix.length));
+            const cmd = bot.commands.get(command.slice(prefix.length));
             if (cmd){
-                    cmd.run(bot,msg,args);
+                cmd.run(bot,msg,args);
             }
         } else {
             console.log('許可されていないユーザーからのコマンドを検知しました');
