@@ -1,3 +1,5 @@
+const { LoggerFactory } = require('logger.js');
+const logger = LoggerFactory.getLogger('listing', 'cyan');
 const Entry = require('./entry');
 
 class Listing {
@@ -12,10 +14,10 @@ class Listing {
 
     // Check to see if user is already present
     userPresent(username){
-        console.log("userPresent called");
+        logger.info("userPresent called");
 
         if (this.users.length > 0){
-            for (var i = 0; i < this.users.length; i++){
+            for (let i = 0; i < this.users.length; i++){
                 if (this.users[i] === username){
                     return true;
                 }
@@ -26,10 +28,10 @@ class Listing {
 
     // Check to see if id is present
     idPresent(id){
-        console.log("idPresent called");
+        logger.info("idPresent called");
 
         if (this.data.length > 0){
-            for (var i = 0; i < this.data.length; i++){
+            for (let i = 0; i < this.data.length; i++){
                 if (this.data[i].id === id){
                     return true;
                 }
@@ -40,9 +42,9 @@ class Listing {
 
     // new user
     addUser(id,username){
-        console.log("addUser called");
+        logger.info("addUser called");
 
-        for (var i = 0; i < this.data.length; i++){
+        for (let i = 0; i < this.data.length; i++){
             if (this.data[i].id === id){
                 this.data[i].users.push(username);
                 this.users.push(username);
@@ -53,18 +55,18 @@ class Listing {
 
     // New id
     addID(id, username){
-        console.log("newId called");
+        logger.info("newId called");
         this.data.push(new Entry(id,username));
         this.users.push(username);
     }
 
     // Find and delete username from users array
     deleteUser(username){
-        console.log("deleteUser called");
+        logger.info("deleteUser called");
 
-        for (var i = 0; i < this.users.length; i++){
+        for (let i = 0; i < this.users.length; i++){
             if (this.users[i] === username){
-                let tmp = this.users[i];
+                const tmp = this.users[i];
                 this.users[i] = this.users[0];
                 this.users[0] = tmp;
                 this.users.shift();
@@ -76,7 +78,7 @@ class Listing {
 
     //Deletes users and id's
     deleteUserEntry(username){
-        console.log("deleteUserEntry called");
+        logger.info("deleteUserEntry called");
 
         if (this.data.length > 0 && this.users.length > 0){
             //Delete the entry when only one id and username is found
@@ -84,25 +86,25 @@ class Listing {
                 this.data.pop();
                 this.users.pop();
             } else {
-                for (var i = 0; i < this.data.length; i++){
+                for (let i = 0; i < this.data.length; i++){
                     if (this.data[i].users.length > 0){
-                        for (var j = 0; j < this.data[i].users.length; j++){
+                        for (let j = 0; j < this.data[i].users.length; j++){
                             if (this.data[i].users[j] === username && this.data[i].users.length > 1){
-                                let tmp = this.data[i].users[j];
+                                const tmp = this.data[i].users[j];
                                 this.data[i].users[j] = this.data[i].users[0];
                                 this.data[i].users[0] = tmp;
 
-                                let deletedUser = this.data[i].users.shift();
-                                console.log(`Deleted user : ${deletedUser}`);
+                                const deletedUser = this.data[i].users.shift();
+                                logger.info(`Deleted user : ${deletedUser}`);
                                 this.deleteUser(username);
                                 return;
                             } else if (this.data[i].users.length === 1 && this.data[i].users[0] === username){
-                                let tmp2 = this.data[i];
+                                const tmp2 = this.data[i];
                                 this.data[i] = this.data[0];
                                 this.data[0] = tmp2;
 
-                                let deletedID = this.data.shift();
-                                console.log(`deleted id : ${deletedID}`);
+                                const deletedID = this.data.shift();
+                                logger.info(`deleted id : ${deletedID}`);
                                 this.deleteUser(username);
                                 return;
                             }
@@ -116,10 +118,10 @@ class Listing {
     // sorts Entry with most users
     sort() {
         if (this.data.length >= 2){
-            for (var i = 0; i < this.data.length - 1; i++){
-                for (var j = i + 1; j < this.data.length; j++){
+            for (let i = 0; i < this.data.length - 1; i++){
+                for (let j = i + 1; j < this.data.length; j++){
                     if (this.data[i].users.length < this.data[j].users.length){
-                        let tmp = this.data[i];
+                        const tmp = this.data[i];
                         this.data[i] = this.data[j];
                         this.data[j] = tmp;
                     }

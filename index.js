@@ -1,4 +1,7 @@
 //require packages
+const { LoggerFactory } = require('logger.js');
+const logger = LoggerFactory.getLogger('main', 'purple');
+logger.info('Initializing');
 const Discord = require('discord.js');
 const settings = require('./settings.json');
 const fs = require('fs');
@@ -15,20 +18,15 @@ const admin = settings.admin; // eslint-disable-line
 
 //read commands files
 fs.readdir('./cmds', (err,files) => {
-    if (err) {
-        console.log(err);
-    }
+    if (err) logger.info(err);
 
     const cmdFiles = files.filter(f => f.split(".").pop() === "js");
 
-    if (cmdFiles.length === 0){
-        console.log("No files found");
-        return;
-    }
+    if (cmdFiles.length === 0) return logger.info("No files found");
 
     cmdFiles.forEach((f,i) => {
         const props = require(`./cmds/${f}`);
-        console.log(`${i+1}: ${f} をロードしました`);
+        logger.info(`${i+1}: ${f} をロードしました`);
         bot.commands.set(props.help.name, props);
     });
 });
@@ -36,21 +34,19 @@ fs.readdir('./cmds', (err,files) => {
 const raw = fs.readFileSync('./roles.json');
 const allowedRoles = JSON.parse(raw);
 
-const validation = function(serverRoles, userRoles) {
+const validation = (serverRoles, userRoles) => {
     let val = false;
     serverRoles.forEach((role) => {
         userRoles.forEach((usr) => {
-            if (role == usr){
-                val = true;
-            }
+            if (role == usr) val = true;
         });
     });
     return val;
 };
 
 bot.on('ready', async () => {
-    bot.user.setActivity(`ScrimBot created by MIG.Karasu | Bot Support on Twitter -> @KaraaasuGg2 Worked in ${bot.guilds.size} servers`);
-    console.log("準備が整いました。");
+    bot.user.setActivity(`ScrimBot created by MIG.Karasu | Bot Support on Twitter -> @KaraaasuGg2 | Working in ${bot.guilds.size} servers`);
+    logger.info("準備が整いました。");
 });
 
 
@@ -65,13 +61,11 @@ bot.on("message", msg => {
     if (!command.startsWith(prefix)) return;
 
     if (bot.commands.get(command.slice(prefix.length))){
-        if (validation(allowedRoles.roles,msg.member.roles.array()) || msg.member.id === owner){
+        if (validation(allowedRoles.roles, msg.member.roles.array()) || msg.member.id === owner){
             const cmd = bot.commands.get(command.slice(prefix.length));
-            if (cmd){
-                cmd.run(bot,msg,args);
-            }
+            if (cmd) cmd.run(bot, msg, args);
         } else {
-            console.log('許可されていないユーザーからのコマンドを検知しました');
+            logger.info(`許可されていないユーザーからのコマンドを検知しました: ${msg.author.tag} (${msg.author.id})`);
             msg.channel.send("あなたにはScrimBotを操作する権限がありません。");
         }
     }
