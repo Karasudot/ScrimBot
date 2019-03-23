@@ -14,7 +14,7 @@ class Listing {
 
     // Check to see if user is already present
     userPresent(username){
-        logger.info("userPresent called");
+        logger.debug("userPresent called");
 
         if (this.users.length > 0){
             for (let i = 0; i < this.users.length; i++){
@@ -28,7 +28,7 @@ class Listing {
 
     // Check to see if id is present
     idPresent(id){
-        logger.info("idPresent called");
+        logger.debug("idPresent called");
 
         if (this.data.length > 0){
             for (let i = 0; i < this.data.length; i++){
@@ -55,14 +55,14 @@ class Listing {
 
     // New id
     addID(id, username){
-        logger.info("newId called");
+        logger.debug("newId called");
         this.data.push(new Entry(id,username));
         this.users.push(username);
     }
 
     // Find and delete username from users array
     deleteUser(username){
-        logger.info("deleteUser called");
+        logger.debug("deleteUser called");
 
         for (let i = 0; i < this.users.length; i++){
             if (this.users[i] === username){
@@ -78,7 +78,7 @@ class Listing {
 
     //Deletes users and id's
     deleteUserEntry(username){
-        logger.info("deleteUserEntry called");
+        logger.debug("deleteUserEntry called");
 
         if (this.data.length > 0 && this.users.length > 0){
             //Delete the entry when only one id and username is found
