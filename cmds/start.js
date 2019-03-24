@@ -1,5 +1,5 @@
 const { LoggerFactory } = require('logger.js');
-const logger = LoggerFactory.getLogger('start', 'cyan');
+const logger = LoggerFactory.getLogger('cmds:start', 'cyan');
 const Discord = require('discord.js');
 const Listing = require('./../modules/Listing');
 
@@ -22,7 +22,7 @@ module.exports.run = async (bot, message) => {
     players[message.guild.id] = new Discord.RichEmbed()
         .setTitle(`プレイヤー一覧 - 合計 0 人`)
         .setColor("1af216");
-    msg_players[message.guild.id] = await message.channel.send(players); // eslint-disable-line
+    msg_players[message.guild.id] = await message.channel.send(players[message.guild.id]); // eslint-disable-line
 
     logger.info(`コマンドを検知：!sbs - 実行ユーザー：${message.author.username}`);
 
