@@ -1,7 +1,6 @@
 const { LoggerFactory } = require('logger.js');
 const logger = LoggerFactory.getLogger('cmds:start', 'cyan');
 const Discord = require('discord.js');
-const Listing = require('./../modules/Listing');
 const locked = new Set();
 
 module.exports.run = async (bot, message) => {
@@ -68,7 +67,6 @@ module.exports.run = async (bot, message) => {
             .setColor("#1af216");
         logger.info(`コマンドを検知：!sbs - 実行ユーザー：${message.author.username}`);
         game.data.forEach(data => {
-            console.log(data.users);
             str = "";
             for (let j = 0; j < Array.from(data.users).length ; j++){
                 str += `<@${Array.from(data.users)[j]}>\n`;
