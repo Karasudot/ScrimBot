@@ -42,7 +42,7 @@ class Listing {
 
     // new user
     addUser(id,username){
-        logger.info("addUser called");
+        logger.debug("addUser called");
 
         for (let i = 0; i < this.data.length; i++){
             if (this.data[i].id === id){
@@ -54,10 +54,10 @@ class Listing {
     }
 
     // New id
-    addID(id, username){
-        logger.debug("newId called");
-        this.data.push(new Entry(id,username));
-        this.users.push(username);
+    addID(id, userid){
+        logger.debug("addID called");
+        this.data.push(new Entry(id,userid));
+        this.users.push(userid);
     }
 
     // Find and delete username from users array

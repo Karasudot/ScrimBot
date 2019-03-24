@@ -2,8 +2,11 @@ const { LoggerFactory } = require('logger.js');
 const logger = LoggerFactory.getLogger('cmds:start', 'cyan');
 const Discord = require('discord.js');
 const Listing = require('./../modules/Listing');
+const locked = new Set();
 
 module.exports.run = async (bot, message) => {
+    if (locked.has(message.guild.id)) return message.channel.send("すでに投票中です。").delete(3000);
+    locked.add(message.guild.id);
     const filter = user => !user.author.bot;
     const game = new Listing();
 
@@ -29,22 +32,22 @@ module.exports.run = async (bot, message) => {
     const collector = {};
     collector[message.guild.id] = message.channel.createMessageCollector(filter, {max: 200, maxMatches: 200, time: 180000});
     collector[message.guild.id].on('collect', m => {
-        logger.info(`Collected ${m.content} | ${m.author.username}`);
+        logger.debug(`Collected ${m.content} | ${m.author.username}`);
         if (game.data.length === 0 && m.content.length === 3){
-            game.addID(m.content.toUpperCase(), m.author.username);
+            game.addID(m.content.toUpperCase(), m.author.id);
         } else if (m.content.length === 3){
-            if (game.userPresent(m.author.username)){
-                game.deleteUserEntry(m.author.username);
+            if (game.userPresent(m.author.id)){
+                game.deleteUserEntry(m.author.id);
                 if (game.idPresent(m.content.toUpperCase())){
-                    game.addUser(m.content.toUpperCase(), m.author.username);
+                    game.addUser(m.content.toUpperCase(), m.author.id);
                 } else {
-                    game.addID(m.content.toUpperCase(),m.author.username);
+                    game.addID(m.content.toUpperCase(),m.author.id);
                 }
             } else {
                 if (game.idPresent(m.content.toUpperCase())){
-                    game.addUser(m.content.toUpperCase(), m.author.username);
+                    game.addUser(m.content.toUpperCase(), m.author.id);
                 } else {
-                    game.addID(m.content.toUpperCase(), m.author.username);
+                    game.addID(m.content.toUpperCase(), m.author.id);
                 }
             }
         }
@@ -59,7 +62,7 @@ module.exports.run = async (bot, message) => {
         for (let i = 0; i < game.data.length; i++){
             str = "";
             for (let j = 0; j < game.data[i].users.length ; j++){
-                str += game.data[i].users[j] + "\n";
+                str += `<@${game.data[i].users[j]}>\n`;
             }
             players[message.guild.id].addField(`ID: ${game.data[i].id.toLowerCase()} - ${game.data[i].users.length}人`, str, true);
         }
@@ -76,6 +79,7 @@ module.exports.run = async (bot, message) => {
     });
 
     collector[message.guild.id].on('end', collected => {
+        locked.delete(message.guild.id);
         const chatlocked = new Discord.RichEmbed()
             .setTitle("マッチコードの入力受け付けを締め切りました")
             .setDescription(`今回のマッチ参加者は ${game.users.length} 人です。\n\n頑張ってください！Good luck！`)
