@@ -17,16 +17,16 @@ const owner = settings.owner;
 const admin = settings.admin; // eslint-disable-line
 
 //read commands files
-fs.readdir('./cmds', (err,files) => {
+fs.readdir('./cmds', async (err,files) => {
     if (err) logger.info(err);
 
     const cmdFiles = files.filter(f => f.split(".").pop() === "js");
 
-    if (cmdFiles.length === 0) return logger.info("No files found");
+    if (cmdFiles.length === 0) return logger.warn("No files found");
 
-    cmdFiles.forEach((f,i) => {
+    cmdFiles.forEach(async (f,i) => {
         const props = require(`./cmds/${f}`);
-        logger.info(`${i+1}: ${f} をロードしました`);
+        logger.info(`#${i+1}: ${f} をロードしました`);
         bot.commands.set(props.help.name, props);
     });
 });
@@ -73,4 +73,5 @@ bot.on("message", async msg => {
 
 
 // Bot login
+logger.info("ログイン中...");
 bot.login(token);

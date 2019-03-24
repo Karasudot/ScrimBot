@@ -1,6 +1,5 @@
 const { LoggerFactory } = require('logger.js');
 const logger = LoggerFactory.getLogger('listing', 'cyan');
-const Entry = require('./entry');
 
 class Listing {
 
@@ -44,19 +43,15 @@ class Listing {
     addUser(id,username){
         logger.debug("addUser called");
 
-        for (let i = 0; i < this.data.length; i++){
-            if (this.data[i].id === id){
-                this.data[i].users.push(username);
-                this.users.push(username);
-                return;
-            }
-        }
+        const data = this.data.filter(d => d.id === id)[0];
+        data.users.push(username);
+        this.users.push(username);
     }
 
     // New id
     addID(id, userid){
         logger.debug("addID called");
-        this.data.push(new Entry(id,userid));
+        this.data.push({id: id, users: [userid]});
         this.users.push(userid);
     }
 
