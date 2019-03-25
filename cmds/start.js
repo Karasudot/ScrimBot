@@ -89,7 +89,7 @@ module.exports.run = async (bot, message) => {
         locked.delete(message.guild.id);
         const chatlocked = new Discord.RichEmbed()
             .setTitle("マッチコードの入力受け付けを締め切りました")
-            .setDescription(`今回のマッチ参加者は ${game.users.length} 人です。\n\n頑張ってください！Good luck！`)
+            .setDescription(`今回のマッチ参加者は ${Array.from(game.users).length} 人です。\n\n頑張ってください！Good luck！`)
             .setColor("#ff0000");
         logger.info(`[CHAT LOCKED] Collected ${collected.size} items`);
         message.channel.send(chatlocked);
