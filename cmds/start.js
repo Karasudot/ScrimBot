@@ -67,22 +67,16 @@ module.exports.run = async (bot, message) => {
             .setColor("#1af216");
         logger.info(`コマンドを検知：!sbs - 実行ユーザー：${message.author.username}`);
         game.data.forEach(data => {
-            str = "";
-            for (let j = 0; j < Array.from(data.users).length ; j++){
-                str += `<@${Array.from(data.users)[j]}>\n`;
-            }
-            if (str) players[message.guild.id].addField(`ID: ${data.id.toLowerCase()} - ${Array.from(data.users).length}人`, str, true);
+            str = Array.from(data.users).map(u => `<@${u}>`).join('\n');
+            if (str) players[message.guild.id]
+                .addField(`ID: ${data.id.toLowerCase()} - ${Array.from(data.users).length}人`, str, true);
         });
 
-        msg_players[message.guild.id].edit(players[message.guild.id]).catch(err => {
-            logger.error(`Error while editing message: ${err}`);
-        });
+        msg_players[message.guild.id]
+            .edit(players[message.guild.id])
+            .catch(err => { logger.error(`Error while editing message: ${err}`); });
 
-        if (m.deletable){
-            m.delete().catch((err) => {
-                logger.error(`Unable to delete message: ${err}`);
-            });
-        }
+        if (m.deletable) m.delete().catch(err => { logger.error(`Unable to delete message: ${err}`); });
     });
 
     collector[message.guild.id].on('end', collected => {
