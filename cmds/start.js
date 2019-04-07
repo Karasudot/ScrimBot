@@ -59,7 +59,7 @@ module.exports.run = async (bot, message) => {
             }
             game.userList.add(m.author.id);
         }
-        game.data.map(data => ({users: Array.from(data.users).length})).sort((a, b) => a.users > b.users);
+        game.data.sort((a, b) => a.users.length > b.users.length);
         // 下三桁を認識するまでのところ
         let str = "";
         players[message.guild.id] = new Discord.RichEmbed()
